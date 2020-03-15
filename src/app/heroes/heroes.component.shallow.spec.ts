@@ -5,6 +5,7 @@ import { HeroService } from '../hero.service';
 // tslint:disable-next-line: import-blacklist
 import { of } from 'rxjs';
 import { Hero } from '../hero';
+import { By } from '@angular/platform-browser';
 
 describe('HeroesComponent (shallow tests)', () => {
   let fixture: ComponentFixture<HeroesComponent>;
@@ -43,5 +44,14 @@ describe('HeroesComponent (shallow tests)', () => {
     mockHeroService.getHeroes.and.returnValue(of(HEROES));
     fixture.detectChanges();
     expect(fixture.componentInstance.heroes.length).toBe(HEROES_INIT_SIZE);
+  });
+
+  it('should render on li item for each hero item', () => {
+
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    fixture.detectChanges();
+
+
+    expect(fixture.debugElement.queryAll(By.css('li')).length).toBe(HEROES_INIT_SIZE);
   });
 });

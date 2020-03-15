@@ -38,4 +38,5 @@ describe('Hero Component (shallow tests)', () => {
     // 'fixture.nativeElement' gives us access to component DOM
     // expect(fixture.nativeElement.querySelector('a').textContent).toContain('SuperSkan');
   });
+
 });
