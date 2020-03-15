@@ -29,3 +29,43 @@ To maintain code, you first need to understand the code. To understand it, you h
 
 >> DRY (Don't repeat yourself) promotes the orthogonality of the code.
 Removing duplication ensures that every concept in the system has a single authoritative representation in the code. A change to a single business concept results in a single change to the code. DRY increases maintainability by isolating change (risk) to only those parts of the system that must change.
+
+
+## Mocking Child Components
+
+Instead of using `NO_ERRORS_SCHEMA` to ignore unknown child element tags.
+You can mock the child component directly in the test.
+
+`NO_ERRORS_SCHEMA` can be bad as tests won't error when the component
+template has actual markup errors..
+
+```JavaScript
+
+// Example of mocking the child 'app-hero' component
+  // Alternative to using risky NO_ERRORS_SCHEMA
+  @Component({
+    selector: 'app-hero',
+    template: '<div></div>'
+  })
+  class MockHeroComponent {
+    @Input() hero: Hero;
+  }
+
+  beforeEach(() => {
+    mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHeroes', 'deleteHeroes']);
+    HEROES = [
+      { ID: 1, NAME: 'SpiderSkan', strength: 8 },
+      { ID: 1, NAME: 'Corona Woman', strength: 8 },
+      { ID: 1, NAME: 'SuperDude', strength: 8 }
+    ];
+    TestBed.configureTestingModule({
+      declarations: [HeroesComponent, MockHeroComponent],
+      providers: [{ provide: HeroService, useValue: mockHeroService }]
+      // NO_ERRORS_SCHEMA can hide problems in template markup
+      // schemas: [NO_ERRORS_SCHEMA]
+    });
+
+    fixture = TestBed.createComponent(HeroesComponent);
+  });
+
+```
