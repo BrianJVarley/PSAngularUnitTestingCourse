@@ -5,8 +5,6 @@ import { HeroService } from '../hero.service';
 import { of } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { HeroComponent } from '../hero/hero.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HEADER_OFFSET } from '@angular/core/src/render3/interfaces/view';
 
 describe('HeroesComponent (deep tests)', () => {
   let fixture: ComponentFixture<HeroesComponent>;
@@ -14,16 +12,16 @@ describe('HeroesComponent (deep tests)', () => {
   let HEROES;
 
   beforeEach(() => {
-    mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHeroes', 'deleteHeroes']);
+    mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHero', 'deleteHeroes']);
     HEROES = [
-      { ID: 1, NAME: 'SpiderSkan', strength: 8 },
-      { ID: 1, NAME: 'Corona Woman', strength: 8 },
-      { ID: 1, NAME: 'SuperDude', strength: 8 }
+      { id: 1, name: 'SpiderSkan', strength: 8 },
+      { id: 1, name: 'Corona Woman', strength: 8 },
+      { id: 1, name: 'SuperDude', strength: 8 }
     ];
     TestBed.configureTestingModule({
       declarations: [HeroesComponent, HeroComponent],
       providers: [{ provide: HeroService, useValue: mockHeroService }],
-      schemas: [NO_ERRORS_SCHEMA]
+      //schemas: [NO_ERRORS_SCHEMA]
     });
 
     fixture = TestBed.createComponent(HeroesComponent);
@@ -45,7 +43,8 @@ describe('HeroesComponent (deep tests)', () => {
     }
   });
 
-  it('Option 1 - should call HeroService.deleteHero when the child HeroComponent delete binding clicked', () => {
+  // Option 1 - Raise events from child component to parent
+  it('should call HeroService.deleteHero when the child HeroComponent delete binding clicked', () => {
     // Spy on component's delete function call
     spyOn(fixture.componentInstance, 'delete');
     mockHeroService.getHeroes.and.returnValue(of(HEROES));
@@ -61,8 +60,8 @@ describe('HeroesComponent (deep tests)', () => {
     expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
   });
 
-
-  it('Option 2 - should call HeroService.deleteHero when the child HeroComponent delete binding clicked', () => {
+  // Option 2 - Emit event from child component to parent, check bindings
+  it('should call HeroService.deleteHero when the child HeroComponent delete binding clicked', () => {
     // Spy on component's delete function call
     spyOn(fixture.componentInstance, 'delete');
     mockHeroService.getHeroes.and.returnValue(of(HEROES));
@@ -77,7 +76,24 @@ describe('HeroesComponent (deep tests)', () => {
     // Assert that correct Hero Item is passed to click handler
     expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
   });
+
+  it('should add new Hero to hero list when add button clicked', () => {
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    fixture.detectChanges();
+
+    const newHeroName = 'MR ICE';
+    mockHeroService.addHero.and.returnValue(of({ id: 5, name: newHeroName, strength: 9 }));
+
+    // Populate input box by getting handle on 'input' element
+    const inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
+    const addButton = fixture.debugElement.queryAll(By.css('button'))[0];
+
+    inputElement.value = newHeroName;
+    addButton.triggerEventHandler('click', null);
+    // Update bindings after event handler trigger
+    fixture.detectChanges();
+
+    const heroText = fixture.debugElement.query(By.css('ul')).nativeElement.textContent;
+    expect(heroText).toContain(newHeroName);
+  });
 });
-
-
-
