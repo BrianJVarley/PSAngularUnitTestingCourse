@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { HeroComponent } from '../hero/hero.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { HEADER_OFFSET } from '@angular/core/src/render3/interfaces/view';
 
 describe('HeroesComponent (deep tests)', () => {
   let fixture: ComponentFixture<HeroesComponent>;
@@ -43,4 +44,40 @@ describe('HeroesComponent (deep tests)', () => {
       expect(heroComponentDebugElements[index].componentInstance.hero.name).toEqual(HEROES[index]);
     }
   });
+
+  it('Option 1 - should call HeroService.deleteHero when the child HeroComponent delete binding clicked', () => {
+    // Spy on component's delete function call
+    spyOn(fixture.componentInstance, 'delete');
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+
+    // Trigger ngOnInit
+    fixture.detectChanges();
+
+    // Trigger the child component's click handler
+    const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+    heroComponents[0].query(By.css('button')).triggerEventHandler('click', { stopPropagation: () => {} });
+
+    // Assert that correct Hero Item is passed to click handler
+    expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
+  });
+
+
+  it('Option 2 - should call HeroService.deleteHero when the child HeroComponent delete binding clicked', () => {
+    // Spy on component's delete function call
+    spyOn(fixture.componentInstance, 'delete');
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+
+    // Trigger ngOnInit
+    fixture.detectChanges();
+
+    // Emit the child component's click event
+    const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+    (<HeroComponent>heroComponents[0].componentInstance).delete.emit(undefined);
+
+    // Assert that correct Hero Item is passed to click handler
+    expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
+  });
 });
+
+
+
