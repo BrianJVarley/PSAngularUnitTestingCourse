@@ -9,6 +9,7 @@ I've added examples of the following Component .spec files..
 - Isolated Unit Tests (Component only)
 - Shallow Integration Tests (Component and Mock Child, DI Services)
 - Deep Integration Tests (Component and Actual Child, Service Integration Tests)
+- Testing DOM Interaction & Routing (Testing click or input bindings, mocking router link)
 
 # Things to consider when writing a test
 
