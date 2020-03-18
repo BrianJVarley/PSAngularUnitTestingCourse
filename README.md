@@ -11,6 +11,12 @@ I've added examples of the following Component .spec files..
 - Deep Integration Tests (Component and Actual Child, Service Integration Tests)
 - Testing DOM Interaction & Routing (Testing click or input bindings, mocking router link)
 
+# Key Takeaways
+
+> Default to Isolated Unit Tests (performant, easier to write)
+> Only use Integration Tests when needed (Testing the template)
+> Rarely use Deep Integration Tests (Prefer shallow, mocking child components)
+
 # Things to consider when writing a test
 
 Should you A) duplicate code within a test which makes it more readable. Or B) remove any duplication to improve maintainability of tests.
