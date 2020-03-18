@@ -32,7 +32,7 @@ template has actual markup errors..
 
 ```JavaScript
 
-// Example of mocking the child 'app-hero' component
+  // Example of mocking the child 'app-hero' component
   // Alternative to using risky NO_ERRORS_SCHEMA
   @Component({
     selector: 'app-hero',
@@ -57,6 +57,32 @@ template has actual markup errors..
     });
 
     fixture = TestBed.createComponent(HeroesComponent);
+  });
+
+```
+
+## Testing Async Code / Promises
+
+Example using ComponentFixture.whenStable to test async code
+> This can be used to resume testing after events have triggered asynchronous activity or asynchronous change detection.
+
+
+```JavaScript
+// Example of testing async promises using Angular's
+  // 'async' function and 'fixture.whenStable' callback
+  // to wait for async promises to resolve before running the 'expect'
+  it('should call updateHero when save is called', async () => {
+    mockHeroService.updateHero.and.returnValue(of({}));
+    fixture.detectChanges();
+
+    fixture.componentInstance.save();
+
+    // fixture.whenStable() callback fires when all promises
+    // within the component have been resolve. In this casr the promise
+    // from mockHeroService.updateHero async call..
+    fixture.whenStable().then(() => {
+      expect(mockHeroService.updateHero).toHaveBeenCalled();
+    });
   });
 
 ```

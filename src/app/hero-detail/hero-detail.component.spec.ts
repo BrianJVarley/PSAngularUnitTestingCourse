@@ -1,4 +1,4 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, flush } from '@angular/core/testing';
 import { HeroDetailComponent } from './hero-detail.component';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -43,5 +43,37 @@ describe('HeroDetailComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('h2').textContent).toContain('MR ICE');
+  });
+
+  // Example of an async to sync test using Angular's
+  // 'fakeAsync' and 'flush'
+  // it('should call heroService.updateHero when save is called', fakeAsync(() => {
+  //   mockHeroService.updateHero.and.returnValue(of({}));
+
+  //   fixture.detectChanges();
+
+  //   fixture.componentInstance.save();
+  //   // look for any waiting tasks, i.e the .debounce function
+  //   // wrapped around this .save function
+  //   flush();
+
+  //   expect(mockHeroService.updateHero).toHaveBeenCalled();
+  // }));
+
+  // Example of testing async promises using Angular's
+  // 'async' function and 'fixture.whenStable' callback
+  // to wait for async promises to resolve before running the 'expect'
+  it('should call updateHero when save is called', async () => {
+    mockHeroService.updateHero.and.returnValue(of({}));
+    fixture.detectChanges();
+
+    fixture.componentInstance.save();
+
+    // fixture.whenStable() callback fires when all promises
+    // within the component have been resolve. In this casr the promise
+    // from mockHeroService.updateHero async call..
+    fixture.whenStable().then(() => {
+      expect(mockHeroService.updateHero).toHaveBeenCalled();
+    });
   });
 });
